@@ -11,5 +11,6 @@ public class Espaco
     public int Capacidade { get; set; }
     public TipoEspaco TipoEspaco { get; set; }
     public bool Disponivel {get;set;}
+    public bool Ativo {get; set;} = true;
     public DateTime DataCriacao { get; set; } = DateTime.Now;
 }
