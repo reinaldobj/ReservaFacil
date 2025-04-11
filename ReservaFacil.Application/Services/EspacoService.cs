@@ -4,6 +4,7 @@ using AutoMapper;
 using ReservaFacil.Application.DTOs;
 using ReservaFacil.Application.Interfaces;
 using ReservaFacil.Domain.Entities;
+using ReservaFacil.Domain.Exceptions;
 using ReservaFacil.Infrastructure.Data.Repositories.Interfaces;
 
 namespace ReservaFacil.Application.Services;
@@ -23,8 +24,8 @@ public class EspacoService : IEspacoService
     public bool AtualizarEspaco(Guid espacoId, EspacoInputDto espacoInputDto)
     {
         var espacoExistente = _espacoRepository.ObterEspacoPorId(espacoId);
-        
-        if (espacoExistente == null) 
+
+        if (espacoExistente == null)
             return false;
 
         Espaco espaco = _mapper.Map<Espaco>(espacoInputDto);
@@ -34,26 +35,21 @@ public class EspacoService : IEspacoService
     }
 
     public EspacoOutputDto CriarEspaco(EspacoInputDto espacoInputDto)
-    {  
-        try{
-            var espacoComMesmoNome = _espacoRepository.ObterEspacoPorNome(espacoInputDto.Nome);
+    {
+        var espacoComMesmoNome = _espacoRepository.ObterEspacoPorNome(espacoInputDto.Nome);
 
-            if(espacoComMesmoNome != null) 
-                    throw new InvalidOperationException("Espaço com o mesmo nome já existe.");
+        if (espacoComMesmoNome != null)
+            throw new BusinessException("Espaço com o mesmo nome já existe.");
 
 
-            var espaco = _mapper.Map<Espaco>(espacoInputDto);
-            espaco.Id = Guid.NewGuid();
-            espaco.Disponivel = true; // Definindo como disponível por padrão
+        var espaco = _mapper.Map<Espaco>(espacoInputDto);
+        espaco.Id = Guid.NewGuid();
+        espaco.Disponivel = true; // Definindo como disponível por padrão
 
-            var espacoOutputDto = _mapper.Map<EspacoOutputDto>(_espacoRepository.CriarEspaco(espaco));
+        var espacoOutputDto = _mapper.Map<EspacoOutputDto>(_espacoRepository.CriarEspaco(espaco));
 
-            return espacoOutputDto;
-        }
-        catch (DbException ex)
-        {
-            throw new Exception("Erro ao criar espaço: " + ex.Message, ex);
-        }
+        return espacoOutputDto;
+
     }
 
     public bool DeletarEspaco(Guid espacoId)

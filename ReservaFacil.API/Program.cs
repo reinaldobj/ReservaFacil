@@ -1,10 +1,14 @@
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.EntityFrameworkCore;
+using ReservaFacil.API.Middlewares;
 using ReservaFacil.Application.Interfaces;
 using ReservaFacil.Application.Mappings;
 using ReservaFacil.Application.Services;
 using ReservaFacil.Infrastructure.Data;
 using ReservaFacil.Infrastructure.Data.Repositories.Interfaces;
 using ReservaFacil.Infrastructure.Data.Repositories.Repositories;
+using Serilog;
+using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var connection = String.Empty;
+
 if(builder.Environment.IsDevelopment()){
     builder.Configuration.AddEnvironmentVariables().AddJsonFile("appsettings.Development.json");
     connection = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -32,6 +37,18 @@ builder.Services.AddScoped<IEspacoService, EspacoService>();
 
 builder.Services.AddControllers();
 
+var appInsightConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.ApplicationInsights(
+        connectionString: appInsightConnectionString, 
+        telemetryConverter: new TraceTelemetryConverter()
+)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 
@@ -44,6 +61,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseExceptionHandlerMiddleware();
 app.MapControllers();
 
 app.Run();

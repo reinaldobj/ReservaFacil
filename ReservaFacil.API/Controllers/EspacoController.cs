@@ -2,23 +2,27 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReservaFacil.Application.DTOs;
 using ReservaFacil.Application.Interfaces;
+using ReservaFacil.Domain.Exceptions;
 
-namespace ReservaFacil.API
+namespace ReservaFacil.API.controller
 {
     [Route("api/[controller]")]
     [ApiController]
     public class EspacoController : ControllerBase
     {
         private readonly IEspacoService _espacoService;
+        private readonly ILogger<EspacoController> _logger;
 
-        public EspacoController(IEspacoService espacoService)
+        public EspacoController(IEspacoService espacoService, ILogger<EspacoController> logger)
         {
+            _logger = logger;
             _espacoService = espacoService;
         }
 
         [HttpGet]
         public List<EspacoOutputDto> ListEspacos()
         {
+             _logger.LogInformation("Listando todos os espaços.");
             var espacos = _espacoService.ListarEspacos();
 
             return espacos.ToList();
@@ -27,12 +31,17 @@ namespace ReservaFacil.API
         [HttpGet("{id}")]
         public IActionResult GetEspacoById(Guid id)
         {
+            _logger.LogInformation($"Buscando espaço com ID: {id}");
+
             if (id == Guid.Empty)
             {
-                return BadRequest("ID Inválido");
+                _logger.LogWarning("ID inválido fornecido.");
+                throw new ValidationException("ID inválido fornecido.");
             }
 
             var espacoOutputDto = _espacoService.ObterEspacoPorId(id);
+
+            _logger.LogInformation($"Espaço encontrado: {espacoOutputDto}");
 
             return Ok(espacoOutputDto);
         }
@@ -40,12 +49,16 @@ namespace ReservaFacil.API
         [HttpPost]
         public IActionResult CreateEspaco([FromBody] EspacoInputDto espacoInputDto)
         {
+            _logger.LogInformation("Criando novo espaço.");
             if (espacoInputDto == null)
             {
-                return BadRequest("Dados inválidos");
+                _logger.LogWarning("Dados inválidos fornecidos para criação de espaço.");
+                throw new NotFoundException("Espaço não encontrado.");
             }
 
             var espacoOutputDto = _espacoService.CriarEspaco(espacoInputDto);
+
+            _logger.LogInformation($"Espaço criado com sucesso: {espacoOutputDto.Id}");
 
             return CreatedAtAction(nameof(GetEspacoById), new { id = espacoOutputDto.Id }, espacoOutputDto);
         }
@@ -55,15 +68,20 @@ namespace ReservaFacil.API
         {
             if (id == Guid.Empty)
             {
-                return BadRequest("Id Inválido");
+                _logger.LogWarning("ID inválido fornecido para exclusão de espaço.");
+
+                throw new ValidationException("ID inválido fornecido para exclusão de espaço.");
             }
 
             var result = _espacoService.DeletarEspaco(id);
 
             if (!result)
             {
-                return NotFound("Espaço não encontrado ou já foi deletado.");
+                _logger.LogWarning($"Espaço com ID {id} não encontrado ou já foi deletado.");
+                throw new NotFoundException("Espaço não encontrado.");
             }
+
+            _logger.LogInformation($"Espaço com ID {id} deletado com sucesso.");
 
             return Ok();
         }
@@ -73,15 +91,21 @@ namespace ReservaFacil.API
         {
             if (id == Guid.Empty || espacoInputDto == null)
             {
-                return BadRequest("Id do espaço inválido ou espaço não pode ser nulo.");
+                _logger.LogWarning("ID inválido ou dados inválidos fornecidos para atualização de espaço.");
+
+                throw new ValidationException("Id do espaço inválido ou espaço não pode ser nulo.");
             }
 
             var result = _espacoService.AtualizarEspaco(id, espacoInputDto);
 
             if (!result)
             {
-                return NotFound("Não foi possível atualizar o espaço.");
+                _logger.LogWarning($"Não foi possível atualizar o espaço com ID {id}.");
+
+                throw new NotFoundException("Não foi possível atualizar o espaço.");
             }
+
+            _logger.LogInformation($"Espaço com ID {id} atualizado com sucesso.");
 
             return Ok();
         }
