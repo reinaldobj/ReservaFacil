@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReservaFacil.Application.DTOs;
@@ -47,6 +48,7 @@ namespace ReservaFacil.API.controller
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrador")]
         public IActionResult CreateEspaco([FromBody] EspacoInputDto espacoInputDto)
         {
             _logger.LogInformation("Criando novo espaço.");
@@ -64,6 +66,7 @@ namespace ReservaFacil.API.controller
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrador")]
         public IActionResult DeleteEspaco(Guid id)
         {
             if (id == Guid.Empty)
@@ -87,6 +90,7 @@ namespace ReservaFacil.API.controller
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Administrador")]
         public IActionResult UpdateEspaco(Guid id, [FromBody] EspacoInputDto espacoInputDto)
         {
             if (id == Guid.Empty || espacoInputDto == null)

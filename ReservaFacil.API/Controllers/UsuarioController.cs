@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReservaFacil.Application.Interfaces;
 using ReservaFacil.Application.DTOs.Usuario;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ReservaFacil.API.Controllers
 {
@@ -19,6 +21,7 @@ namespace ReservaFacil.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Administrador")]
         public IActionResult ListarUsuarios()
         {
             _logger.LogInformation("Listando todos os usuários.");
@@ -27,6 +30,7 @@ namespace ReservaFacil.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrador")]
         public IActionResult ObterUsuarioPorId(Guid id)
         {
             _logger.LogInformation($"Buscando usuário com ID: {id}");
@@ -65,8 +69,21 @@ namespace ReservaFacil.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public IActionResult AtualizarUsuario(Guid id, [FromBody] UsuarioInputDto usuarioInputDto)
         {
+            var usuarioLogado = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _logger.LogInformation($"Usuário logado: {usuarioLogado}");
+
+            var TipoUsuario = User.FindFirstValue(ClaimTypes.Role);
+            _logger.LogInformation($"Tipo de usuário: {TipoUsuario}");
+
+            if(usuarioLogado != id.ToString() && TipoUsuario != "Administrador")
+            {
+                _logger.LogWarning($"{usuarioLogado} não autorizado a atualizar este usuário.");
+                return Forbid("Usuário não autorizado a atualizar este usuário.");
+            }
+            
             _logger.LogInformation($"Atualizando usuário com ID: {id}");
 
             if (id == Guid.Empty || usuarioInputDto == null)
@@ -87,6 +104,7 @@ namespace ReservaFacil.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrador")]
         public IActionResult DeletarUsuario(Guid id)
         {
             _logger.LogInformation($"Deletando usuário com ID: {id}");
