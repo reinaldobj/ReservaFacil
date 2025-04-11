@@ -59,7 +59,7 @@ public class EspacoRepository : IEspacoRepository
         return SaveChanges();
     }
 
-    public bool SaveChanges()
+    private bool SaveChanges()
     {
         return _context.SaveChanges() > 0;
     }

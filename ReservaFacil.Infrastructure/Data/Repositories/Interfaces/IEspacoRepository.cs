@@ -10,6 +10,5 @@ public interface IEspacoRepository
     Espaco CriarEspaco(Espaco espaco);
     bool AtualizarEspaco(Guid espacoId, Espaco espaco);
     bool DeletarEspaco(Guid espacoId);
-    bool SaveChanges();
     object ObterEspacoPorNome(string nome);
 }
