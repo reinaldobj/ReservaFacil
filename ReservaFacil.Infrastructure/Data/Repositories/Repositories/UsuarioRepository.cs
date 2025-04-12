@@ -43,9 +43,16 @@ public class UsuarioRepository : IUsuarioRepository
         return usuario;
     }
 
-    public bool Atualizar(Usuario usuario)
+    public bool Atualizar(Guid id, Usuario usuario)
     {
-        _context.Usuarios.Update(usuario);
+        var usuarioExistente = ObterPorId(id);
+        if (usuarioExistente == null) return false;
+
+        usuarioExistente.Nome = usuario.Nome;
+        usuarioExistente.Email = usuario.Email;
+        usuarioExistente.TipoUsuario = usuario.TipoUsuario;
+
+        _context.Usuarios.Update(usuarioExistente);
         return SaveChanges();
     }
 
@@ -58,20 +65,13 @@ public class UsuarioRepository : IUsuarioRepository
         return SaveChanges();
     }
 
-    public List<Usuario> ListarUsuarios()
+    public List<Usuario> Listar()
     {
         return _context.Usuarios.ToList();
     }
 
     private bool SaveChanges()
     {
-        try
-        {
-            return _context.SaveChanges() > 0;
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            return false;
-        }
+        return _context.SaveChanges() > 0;
     }
 }

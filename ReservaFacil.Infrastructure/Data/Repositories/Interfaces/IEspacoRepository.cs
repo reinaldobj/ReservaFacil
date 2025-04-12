@@ -5,10 +5,10 @@ namespace ReservaFacil.Infrastructure.Data.Repositories.Interfaces;
 
 public interface IEspacoRepository
 {
-    IEnumerable<Espaco> ListarEspacos();
-    Espaco ObterEspacoPorId(Guid espacoId);
-    Espaco CriarEspaco(Espaco espaco);
-    bool AtualizarEspaco(Guid espacoId, Espaco espaco);
-    bool DeletarEspaco(Guid espacoId);
-    object ObterEspacoPorNome(string nome);
+    IEnumerable<Espaco> Listar();
+    Espaco ObterPorId(Guid espacoId);
+    Espaco Criar(Espaco espaco);
+    bool Atualizar(Guid espacoId, Espaco espaco);
+    bool Deletar(Guid espacoId);
+    object ObterPorNome(string nome);
 }

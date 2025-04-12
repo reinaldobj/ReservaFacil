@@ -24,7 +24,7 @@ namespace ReservaFacil.API.Controllers
         public IActionResult ListarReservas()
         {
             _logger.LogInformation("Listando todas as reservas.");
-            var reservas = _reservaService.ListarReservas();
+            var reservas = _reservaService.Listar();
             return Ok(reservas);
         }
 
@@ -144,7 +144,7 @@ namespace ReservaFacil.API.Controllers
                 return BadRequest("ID inválido fornecido.");
             }
 
-            var reservas = _reservaService.ListarReservasPorUsuario(usuarioId);
+            var reservas = _reservaService.ListarPorUsuario(usuarioId);
             return Ok(reservas);
         }
 
@@ -159,7 +159,7 @@ namespace ReservaFacil.API.Controllers
                 return BadRequest("ID inválido fornecido.");
             }
 
-            var reservas = _reservaService.ListarReservasPorEspaco(espacoId);
+            var reservas = _reservaService.ListarPorEspaco(espacoId);
             return Ok(reservas);
         }
     }

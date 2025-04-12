@@ -19,9 +19,9 @@ public class EspacoService : IEspacoService
         _espacoRepository = espacoRepository;
     }
 
-    public bool AtualizarEspaco(Guid espacoId, EspacoInputDto espacoInputDto)
+    public bool Atualizar(Guid espacoId, EspacoInputDto espacoInputDto)
     {
-        var espacoExistente = _espacoRepository.ObterEspacoPorId(espacoId);
+        var espacoExistente = _espacoRepository.ObterPorId(espacoId);
 
         if (espacoExistente == null)
             return false;
@@ -29,12 +29,12 @@ public class EspacoService : IEspacoService
         Espaco espaco = _mapper.Map<Espaco>(espacoInputDto);
         espaco.Id = espacoId;
 
-        return _espacoRepository.AtualizarEspaco(espacoId, espaco);
+        return _espacoRepository.Atualizar(espacoId, espaco);
     }
 
-    public EspacoOutputDto CriarEspaco(EspacoInputDto espacoInputDto)
+    public EspacoOutputDto Criar(EspacoInputDto espacoInputDto)
     {
-        var espacoComMesmoNome = _espacoRepository.ObterEspacoPorNome(espacoInputDto.Nome);
+        var espacoComMesmoNome = _espacoRepository.ObterPorNome(espacoInputDto.Nome);
 
         if (espacoComMesmoNome != null)
             throw new BusinessException("Espaço com o mesmo nome já existe.");
@@ -44,24 +44,24 @@ public class EspacoService : IEspacoService
         espaco.Id = Guid.NewGuid();
         espaco.Disponivel = true; // Definindo como disponível por padrão
 
-        var espacoOutputDto = _mapper.Map<EspacoOutputDto>(_espacoRepository.CriarEspaco(espaco));
+        var espacoOutputDto = _mapper.Map<EspacoOutputDto>(_espacoRepository.Criar(espaco));
 
         return espacoOutputDto;
 
     }
 
-    public bool DeletarEspaco(Guid espacoId)
+    public bool Deletar(Guid espacoId)
     {
-        return _espacoRepository.DeletarEspaco(espacoId);
+        return _espacoRepository.Deletar(espacoId);
     }
 
-    public EspacoOutputDto ObterEspacoPorId(Guid espacoId)
+    public EspacoOutputDto ObterPorId(Guid espacoId)
     {
-        return _mapper.Map<EspacoOutputDto>(_espacoRepository.ObterEspacoPorId(espacoId));
+        return _mapper.Map<EspacoOutputDto>(_espacoRepository.ObterPorId(espacoId));
     }
 
-    public IEnumerable<EspacoOutputDto> ListarEspacos()
+    public IEnumerable<EspacoOutputDto> Listar()
     {
-        return _mapper.Map<IEnumerable<EspacoOutputDto>>(_espacoRepository.ListarEspacos());
+        return _mapper.Map<IEnumerable<EspacoOutputDto>>(_espacoRepository.Listar());
     }
 }

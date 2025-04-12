@@ -14,6 +14,7 @@ public class UsuarioProfile : Profile
 
         CreateMap<UsuarioInputDto, Usuario>()
             .ForMember(dest => dest.TipoUsuario, opt => opt.MapFrom(src => Enum.Parse<TipoUsuario>(src.TipoUsuario)))
-            .ForMember(dest => dest.SenhaHash, opt => opt.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Senha)));
+            .ForMember(dest => dest.SenhaHash, opt => opt.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Senha)))
+            .ForMember(dest => dest.Id, opt => opt.Ignore());// Ignora o Id, pois ele será gerado automaticamente no banco de dados
     }
 }

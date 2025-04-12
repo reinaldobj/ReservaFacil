@@ -45,9 +45,6 @@ public class UsuarioService : IUsuarioService
 
         var usuario = _mapper.Map<Usuario>(usuarioInputDto);
 
-        //usuario.SenhaHash = BCrypt.Net.BCrypt.HashPassword(usuarioInputDto.Senha);
-        usuarioInputDto.Senha = null; // Limpa a senha original após o hash
-
         _usuarioRepository.Criar(usuario);
 
         return _mapper.Map<UsuarioOutputDto>(usuario);
@@ -60,7 +57,7 @@ public class UsuarioService : IUsuarioService
             throw new ValidationException($"Usuário com ID {id} não encontrado.");
 
         _mapper.Map(usuarioInputDto, usuario);
-        _usuarioRepository.Atualizar(usuario);
+        _usuarioRepository.Atualizar(id, usuario);
         return true;
     }
 
@@ -76,7 +73,7 @@ public class UsuarioService : IUsuarioService
 
     public List<UsuarioOutputDto> ListarUsuarios()
     {
-        var usuarios = _usuarioRepository.ListarUsuarios();
+        var usuarios = _usuarioRepository.Listar();
         return _mapper.Map<List<UsuarioOutputDto>>(usuarios);
     }
 }

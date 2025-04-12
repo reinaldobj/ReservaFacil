@@ -15,7 +15,7 @@ public class ReservaRepository : IReservaRepository
         _context = context;
     }
 
-    public IEnumerable<Reserva> ListarReservas()
+    public IEnumerable<Reserva> Listar()
     {
         return _context.Reservas
             .Include(r => r.Espaco)
@@ -23,7 +23,7 @@ public class ReservaRepository : IReservaRepository
             .ToList();
     }
 
-    public Reserva ObterReservaPorId(Guid reservaId)
+    public Reserva ObterPorId(Guid reservaId)
     {
         return _context.Reservas
             .Include(r => r.Espaco)
@@ -31,7 +31,7 @@ public class ReservaRepository : IReservaRepository
             .FirstOrDefault(r => r.Id == reservaId);
     }
 
-    public Reserva CriarReserva(Reserva reserva)
+    public Reserva Criar(Reserva reserva)
     {
         _context.Reservas.Add(reserva);
         _context.SaveChanges();
@@ -39,9 +39,9 @@ public class ReservaRepository : IReservaRepository
         return reserva;
     }
 
-    public bool AtualizarReserva(Guid reservaId, Reserva reserva)
+    public bool Atualizar(Guid reservaId, Reserva reserva)
     {
-        var reservaExistente = ObterReservaPorId(reservaId);
+        var reservaExistente = ObterPorId(reservaId);
         if (reservaExistente == null) return false;
 
         reservaExistente.DataInicio = reserva.DataInicio;
@@ -50,21 +50,21 @@ public class ReservaRepository : IReservaRepository
         
         _context.Reservas.Update(reservaExistente);
         
-        return _context.SaveChanges() > 0;
+        return SaveChanges();
     }
 
-    public bool DeletarReserva(Guid reservaId)
+    public bool Deletar(Guid reservaId)
     {
-        var reserva = ObterReservaPorId(reservaId);
+        var reserva = ObterPorId(reservaId);
         if (reserva == null) return false;
 
         reserva.StatusReserva = StatusReserva.Cancelada; // ou outro status que represente a exclusão
         _context.Reservas.Update(reserva);
         
-        return _context.SaveChanges() > 0;
+        return SaveChanges();
     }
 
-    public IEnumerable<Reserva> ObterReservasPorEspacoId(Guid espacoId)
+    public IEnumerable<Reserva> ObterPorEspacoId(Guid espacoId)
     {
         return _context.Reservas
             .Include(r => r.Espaco)
@@ -73,7 +73,7 @@ public class ReservaRepository : IReservaRepository
             .ToList();
     }
 
-    public IEnumerable<Reserva> ObterReservasPorUsuarioId(Guid usuarioId)
+    public IEnumerable<Reserva> ObterPorUsuarioId(Guid usuarioId)
     {
         return _context.Reservas
             .Include(r => r.Espaco)
@@ -82,7 +82,7 @@ public class ReservaRepository : IReservaRepository
             .ToList();
     }
 
-    public IEnumerable<Reserva> ObterReservasPorData(DateTime dataInicial, DateTime dataFinal)
+    public IEnumerable<Reserva> ObterPorData(DateTime dataInicial, DateTime dataFinal)
     {
         return _context.Reservas
             .Include(r => r.Espaco)
@@ -91,4 +91,17 @@ public class ReservaRepository : IReservaRepository
             .ToList();
     }
 
+    private bool SaveChanges()
+    {
+        return _context.SaveChanges() > 0;
+    }
+
+    public bool VerificarConflito(DateTime dataInicio, DateTime DataFim, Guid espacoId)
+    {
+        var reservasConflitantes = _context.Reservas
+            .Where(r => r.EspacoId == espacoId && r.StatusReserva != StatusReserva.Cancelada)
+            .Any(r => (r.DataInicio < DataFim && r.DataFim > dataInicio));
+
+        return reservasConflitantes;
+    }
 }

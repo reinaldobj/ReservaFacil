@@ -21,5 +21,5 @@ public class UsuarioInputDto
 
     [Required]
     public String TipoUsuario { get; set; } = string.Empty; // 0 - Administrador, 1 - Usuario Comum
-    public object Id { get; set; }
+    public Guid Id { get; set; }
 }
