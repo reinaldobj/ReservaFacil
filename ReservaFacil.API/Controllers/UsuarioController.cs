@@ -78,7 +78,7 @@ namespace ReservaFacil.API.Controllers
             var TipoUsuario = User.FindFirstValue(ClaimTypes.Role);
             _logger.LogInformation($"Tipo de usuário: {TipoUsuario}");
 
-            if(usuarioLogado != id.ToString() && TipoUsuario != "Administrador")
+            if(usuarioLogado != usuarioInputDto.Email && TipoUsuario != "Administrador")
             {
                 _logger.LogWarning($"{usuarioLogado} não autorizado a atualizar este usuário.");
                 return Forbid("Usuário não autorizado a atualizar este usuário.");

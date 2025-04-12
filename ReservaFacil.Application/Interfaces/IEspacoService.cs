@@ -1,13 +1,12 @@
-using System;
-using ReservaFacil.Application.DTOs;
+using ReservaFacil.Application.DTOs.Espaco;
 
 namespace ReservaFacil.Application.Interfaces;
 
 public interface IEspacoService
 {
-    IEnumerable<EspacoOutputDto> ListarEspacos();
-    EspacoOutputDto ObterEspacoPorId(Guid espacoId);
-    EspacoOutputDto CriarEspaco(EspacoInputDto espacoInputDto);
-    bool AtualizarEspaco(Guid espacoId, EspacoInputDto espacoInputDto);
-    bool DeletarEspaco(Guid espacoId);
+    IEnumerable<EspacoOutputDto> Listar();
+    EspacoOutputDto ObterPorId(Guid espacoId);
+    EspacoOutputDto Criar(EspacoInputDto espacoInputDto);
+    bool Atualizar(Guid espacoId, EspacoInputDto espacoInputDto);
+    bool Deletar(Guid espacoId);
 }

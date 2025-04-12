@@ -9,7 +9,7 @@ public interface IUsuarioRepository
     Usuario ObterPorId(Guid id);
     Usuario ObterPorNome(string nome);
     Usuario Criar(Usuario usuario);
-    bool Atualizar(Usuario usuario);
+    bool Atualizar(Guid id, Usuario usuario);
     bool Deletar(Guid id);
-    List<Usuario> ListarUsuarios();
+    List<Usuario> Listar();
 }

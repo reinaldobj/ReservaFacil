@@ -13,18 +13,18 @@ public class EspacoRepository : IEspacoRepository
         _context = context;
     }
 
-    public IEnumerable<Espaco> ListarEspacos()
+    public IEnumerable<Espaco> Listar()
     {
         return _context.Espacos
             .ToList();
     }
 
-    public Espaco ObterEspacoPorId(Guid espacoId)
+    public Espaco ObterPorId(Guid espacoId)
     {
         return _context.Espacos.Find(espacoId) ?? throw new InvalidOperationException("Espaço não encontrado.");
     }
 
-    public Espaco CriarEspaco(Espaco espaco)
+    public Espaco Criar(Espaco espaco)
     {
         _context.Espacos.Add(espaco);
         this.SaveChanges();
@@ -32,9 +32,9 @@ public class EspacoRepository : IEspacoRepository
         return espaco;
     }
 
-    public bool AtualizarEspaco(Guid espacoId, Espaco espaco)
+    public bool Atualizar(Guid espacoId, Espaco espaco)
     {
-        var espacoExistente = ObterEspacoPorId(espacoId);
+        var espacoExistente = ObterPorId(espacoId);
         if (espacoExistente == null) return false;
 
         espacoExistente.Nome = espaco.Nome;
@@ -49,9 +49,9 @@ public class EspacoRepository : IEspacoRepository
         return SaveChanges();
     }
 
-    public bool DeletarEspaco(Guid espacoId)
+    public bool Deletar(Guid espacoId)
     {
-        var espaco = ObterEspacoPorId(espacoId);
+        var espaco = ObterPorId(espacoId);
         if (espaco == null) return false;
 
         espaco.Ativo = false;
@@ -64,7 +64,7 @@ public class EspacoRepository : IEspacoRepository
         return _context.SaveChanges() > 0;
     }
 
-    public object ObterEspacoPorNome(string nome)
+    public object ObterPorNome(string nome)
     {
         var espaco = _context.Espacos.FirstOrDefault(e => e.Nome == nome);
         if (espaco == null) return null;

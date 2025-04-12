@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ReservaFacil.Application.DTOs;
+using ReservaFacil.Application.DTOs.Espaco;
 using ReservaFacil.Application.Interfaces;
 using ReservaFacil.Domain.Exceptions;
 
@@ -24,7 +23,7 @@ namespace ReservaFacil.API.controller
         public List<EspacoOutputDto> ListEspacos()
         {
              _logger.LogInformation("Listando todos os espaços.");
-            var espacos = _espacoService.ListarEspacos();
+            var espacos = _espacoService.Listar();
 
             return espacos.ToList();
         }
@@ -40,7 +39,7 @@ namespace ReservaFacil.API.controller
                 throw new ValidationException("ID inválido fornecido.");
             }
 
-            var espacoOutputDto = _espacoService.ObterEspacoPorId(id);
+            var espacoOutputDto = _espacoService.ObterPorId(id);
 
             _logger.LogInformation($"Espaço encontrado: {espacoOutputDto}");
 
@@ -58,7 +57,7 @@ namespace ReservaFacil.API.controller
                 throw new NotFoundException("Espaço não encontrado.");
             }
 
-            var espacoOutputDto = _espacoService.CriarEspaco(espacoInputDto);
+            var espacoOutputDto = _espacoService.Criar(espacoInputDto);
 
             _logger.LogInformation($"Espaço criado com sucesso: {espacoOutputDto.Id}");
 
@@ -76,7 +75,7 @@ namespace ReservaFacil.API.controller
                 throw new ValidationException("ID inválido fornecido para exclusão de espaço.");
             }
 
-            var result = _espacoService.DeletarEspaco(id);
+            var result = _espacoService.Deletar(id);
 
             if (!result)
             {
@@ -100,7 +99,7 @@ namespace ReservaFacil.API.controller
                 throw new ValidationException("Id do espaço inválido ou espaço não pode ser nulo.");
             }
 
-            var result = _espacoService.AtualizarEspaco(id, espacoInputDto);
+            var result = _espacoService.Atualizar(id, espacoInputDto);
 
             if (!result)
             {

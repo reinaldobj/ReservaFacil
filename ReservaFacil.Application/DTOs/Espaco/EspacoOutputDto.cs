@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ReservaFacil.Application.DTOs;
+namespace ReservaFacil.Application.DTOs.Espaco;
 
 public class EspacoOutputDto
 {
