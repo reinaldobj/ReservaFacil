@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ReservaFacil.Application.DTOs;
+using ReservaFacil.Application.DTOs.Espaco;
 using ReservaFacil.Application.Interfaces;
 using ReservaFacil.Domain.Exceptions;
 

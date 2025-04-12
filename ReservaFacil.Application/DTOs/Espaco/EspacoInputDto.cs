@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography.X509Certificates;
 
-namespace ReservaFacil.Application.DTOs;
+namespace ReservaFacil.Application.DTOs.Espaco;
 
 public class EspacoInputDto
 {
@@ -22,4 +22,6 @@ public class EspacoInputDto
     public string TipoEspaco { get; set; }
 
     public bool Disponivel { get; set; } = true;
+    
+    public Guid Id { get; set; }
 }

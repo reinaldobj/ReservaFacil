@@ -1,7 +1,5 @@
-using System;
-using System.Data.Common;
 using AutoMapper;
-using ReservaFacil.Application.DTOs;
+using ReservaFacil.Application.DTOs.Espaco;
 using ReservaFacil.Application.Interfaces;
 using ReservaFacil.Domain.Entities;
 using ReservaFacil.Domain.Exceptions;

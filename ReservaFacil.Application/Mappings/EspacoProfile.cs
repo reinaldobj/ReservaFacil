@@ -1,5 +1,6 @@
 using AutoMapper;
 using ReservaFacil.Application.DTOs;
+using ReservaFacil.Application.DTOs.Espaco;
 using ReservaFacil.Domain.Entities;
 using ReservaFacil.Domain.Enums;
 

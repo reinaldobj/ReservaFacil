@@ -1,5 +1,4 @@
-using System;
-using ReservaFacil.Application.DTOs;
+using ReservaFacil.Application.DTOs.Espaco;
 
 namespace ReservaFacil.Application.Interfaces;
 
