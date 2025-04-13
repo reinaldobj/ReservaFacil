@@ -10,24 +10,26 @@ public class ApiResponse<T>
     public int StatusCode { get; set; } = 200;
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
-    public static ApiResponse<T> Ok(T dados, string mensagem = "")
+    public static ApiResponse<T> Ok(T dados, string mensagem = "", int statusCode = 200)
     {
         return new ApiResponse<T>
         {
             Sucesso = true,
             Mensagem = mensagem,
             Dados = dados,
-            Timestamp = DateTime.UtcNow
+            Timestamp = DateTime.UtcNow,
+            StatusCode = statusCode
         };
     }
 
-    public static ApiResponse<T> Erro(string mensagem)
+    public static ApiResponse<T> Erro(string mensagem, int statusCode = 500)
     {
         return new ApiResponse<T>
         {
             Sucesso = false,
             Mensagem = mensagem,
-            Timestamp = DateTime.UtcNow
+            Timestamp = DateTime.UtcNow,
+            StatusCode = statusCode
         };
     }
 }

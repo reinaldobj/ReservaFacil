@@ -49,7 +49,7 @@ public class ExceptionMiddleware
                 _ => "Desculpe, algo deu errado. Por favor, tente novamente mais tarde."
             };
 
-            var response = ApiResponse<string>.Erro(mensagem);
+            var response = ApiResponse<string>.Erro(mensagem, statusCode);
 
             context.Response.StatusCode = (int)statusCode;
             context.Response.Headers.Append("X-Trace-Id", traceId);
