@@ -15,15 +15,16 @@ public class AuthService : IAuthService
 {
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly IConfiguration _configuration;
-
+    private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
 
 
-    public AuthService(IUsuarioRepository usuarioRepository, IConfiguration configuration, IMapper mapper)
+    public AuthService(IUsuarioRepository usuarioRepository, IConfiguration configuration, IMapper mapper, ITokenService tokenService)
     {
         _usuarioRepository = usuarioRepository;
         _configuration = configuration;
         _mapper = mapper;
+        _tokenService = tokenService;
     }
 
     public LoginOutputDto Login(LoginInputDto loginInputDto)
@@ -36,7 +37,7 @@ public class AuthService : IAuthService
         if (!BCrypt.Net.BCrypt.Verify(loginInputDto.Senha, usuario.SenhaHash))
             throw new Exception("Senha incorreta.");
 
-        var token = GenerateToken(usuario);
+        var token = _tokenService.GerarToken(usuario);
         return new LoginOutputDto
         {
             Nome = usuario.Nome,
@@ -44,31 +45,5 @@ public class AuthService : IAuthService
             TipoUsuario = usuario.TipoUsuario.ToString(),
             Token = token
         };
-    }
-
-    private string GenerateToken(Usuario usuario)
-    {
-        var chaveJwt = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("Chave JWT não configurada.");
-        var issuer = _configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("Issuer JWT não configurado.");
-
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, usuario.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.Role, usuario.TipoUsuario.ToString())
-        };
-
-        var chave = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(chaveJwt));
-        var credenciais = new SigningCredentials(chave, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: issuer,
-            audience: issuer,
-            claims: claims,
-            expires: DateTime.Now.AddHours(2),
-            signingCredentials: credenciais
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

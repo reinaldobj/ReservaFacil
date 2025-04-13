@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ReservaFacil.Application.DTOs;
 using ReservaFacil.Application.DTOs.Login;
 using ReservaFacil.Application.Interfaces;
 
@@ -7,14 +8,11 @@ namespace ReservaFacil.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController : BaseApiController
     {
         private readonly IAuthService _authService;
-        private readonly ILogger<AuthController> _logger;
-
-        public AuthController(IAuthService authService, ILogger<AuthController> logger)
+        public AuthController(IAuthService authService, ILogger<AuthController> logger) : base(logger)
         {
-            _logger = logger;
             _authService = authService;
         }
 
@@ -23,22 +21,18 @@ namespace ReservaFacil.API.Controllers
         {
             _logger.LogInformation("Iniciando processo de login.");
 
-            if (loginInputDto == null || string.IsNullOrEmpty(loginInputDto.Email) || string.IsNullOrEmpty(loginInputDto.Senha))
-            {
-                _logger.LogWarning("Dados inválidos fornecidos para login.");
-                return BadRequest("Dados inválidos fornecidos para login.");
-            }
-
             var loginOutputDto = _authService.Login(loginInputDto);
 
             if (loginOutputDto == null || string.IsNullOrEmpty(loginOutputDto.Token))
             {
                 _logger.LogWarning("Falha no login: credenciais inválidas.");
-                return Unauthorized("Credenciais inválidas.");
+
+                return ErroUnauthorized("Falha no login: credenciais inválidas.");
             }
 
             _logger.LogInformation("Login realizado com sucesso.");
-            return Ok(loginOutputDto);
+
+            return RespostaOk(loginOutputDto, "Login realizado com sucesso.");
         }
     }
 }

@@ -4,19 +4,21 @@ using ReservaFacil.Application.Interfaces;
 using ReservaFacil.Application.DTOs.Usuario;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using ReservaFacil.API.Helpers;
+using ReservaFacil.Application.DTOs;
+using System.Net;
+using AutoMapper;
 
 namespace ReservaFacil.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuarioController : ControllerBase
+    public class UsuarioController : BaseApiController
     {
         private readonly IUsuarioService _usuarioService;
-        private readonly ILogger<UsuarioController> _logger;
 
-        public UsuarioController(IUsuarioService usuarioService, ILogger<UsuarioController> logger)
+        public UsuarioController(IUsuarioService usuarioService, ILogger<UsuarioController> logger) : base(logger)
         {
-            _logger = logger;
             _usuarioService = usuarioService;
         }
 
@@ -25,8 +27,10 @@ namespace ReservaFacil.API.Controllers
         public IActionResult ListarUsuarios()
         {
             _logger.LogInformation("Listando todos os usuários.");
+
             var usuarios = _usuarioService.ListarUsuarios();
-            return Ok(usuarios);
+            
+            return RespostaOk(usuarios);
         }
 
         [HttpGet("{id}")]
@@ -38,7 +42,8 @@ namespace ReservaFacil.API.Controllers
             if (id == Guid.Empty)
             {
                 _logger.LogWarning("ID inválido fornecido.");
-                return BadRequest("ID inválido fornecido.");
+
+                return ErroBadRequest("ID inválido fornecido.");
             }
 
             var usuarioOutputDto = _usuarioService.ObterPorId(id);
@@ -46,11 +51,12 @@ namespace ReservaFacil.API.Controllers
             if (usuarioOutputDto == null)
             {
                 _logger.LogWarning($"Usuário com ID {id} não encontrado.");
-                return NotFound($"Usuário com ID {id} não encontrado.");
+
+                return ErroNotFound($"Usuário com ID {id} não encontrado.");
             }
 
             _logger.LogInformation($"Usuário encontrado: {usuarioOutputDto}");
-            return Ok(usuarioOutputDto);
+            return RespostaOk(usuarioOutputDto);
         }
 
         [HttpPost]
@@ -58,49 +64,46 @@ namespace ReservaFacil.API.Controllers
         {
             _logger.LogInformation("Criando novo usuário.");
 
-            if (usuarioInputDto == null)
-            {
-                _logger.LogWarning("Dados inválidos fornecidos para criação de usuário.");
-                return BadRequest("Dados inválidos fornecidos para criação de usuário.");
-            }
-
             var usuarioOutputDto = _usuarioService.Criar(usuarioInputDto);
-            return CreatedAtAction(nameof(ObterUsuarioPorId), new { id = usuarioOutputDto.Id }, usuarioOutputDto);
+
+            var resposta = ApiResponse<UsuarioOutputDto>.Ok(usuarioOutputDto, "Usuário criado com sucesso.");
+
+            _logger.LogInformation($"Usuário criado com sucesso: {usuarioOutputDto.Id}");
+
+            return CreatedAtAction(nameof(ObterUsuarioPorId), new { id = usuarioOutputDto.Id }, resposta);
         }
 
         [HttpPut("{id}")]
         [Authorize]
         public IActionResult AtualizarUsuario(Guid id, [FromBody] UsuarioInputDto usuarioInputDto)
         {
-            var usuarioLogado = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            _logger.LogInformation($"Usuário logado: {usuarioLogado}");
+            if(!AutorizacaoHelper.EhUsuarioAutorizado(HttpContext, id)){
+                _logger.LogWarning($"{id} não autorizado a atualizar este usuário.");
 
-            var TipoUsuario = User.FindFirstValue(ClaimTypes.Role);
-            _logger.LogInformation($"Tipo de usuário: {TipoUsuario}");
-
-            if(usuarioLogado != usuarioInputDto.Email && TipoUsuario != "Administrador")
-            {
-                _logger.LogWarning($"{usuarioLogado} não autorizado a atualizar este usuário.");
-                return Forbid("Usuário não autorizado a atualizar este usuário.");
+                return ErroForbidden("Usuário não autorizado a atualizar este usuário.");
             }
             
             _logger.LogInformation($"Atualizando usuário com ID: {id}");
 
-            if (id == Guid.Empty || usuarioInputDto == null)
+            if (id == Guid.Empty)
             {
                 _logger.LogWarning("ID inválido ou dados inválidos fornecidos para atualização de usuário.");
-                return BadRequest("ID inválido ou dados inválidos fornecidos para atualização de usuário.");
+                
+                return ErroBadRequest("ID inválido ou dados inválidos fornecidos para atualização de usuário.");
             }
 
-            var usuarioAtualizado = _usuarioService.Atualizar(id, usuarioInputDto);
+            var usuarioAtualizadoComSucesso = _usuarioService.Atualizar(id, usuarioInputDto);
 
-            if (!usuarioAtualizado)
+            if (!usuarioAtualizadoComSucesso)
             {
                 _logger.LogWarning($"Usuário com ID {id} não encontrado.");
-                return NotFound($"Usuário com ID {id} não encontrado.");
+
+                return ErroNotFound($"Usuário com ID {id} não encontrado.");
             }
 
-            return NoContent();
+            var usuarioAtualizado = _usuarioService.ObterPorId(id);
+
+            return RespostaOk(usuarioAtualizado, "Usuário atualizado com sucesso.");
         }
 
         [HttpDelete("{id}")]
@@ -112,7 +115,8 @@ namespace ReservaFacil.API.Controllers
             if (id == Guid.Empty)
             {
                 _logger.LogWarning("ID inválido fornecido para exclusão de usuário.");
-                return BadRequest("ID inválido fornecido para exclusão de usuário.");
+
+                return ErroBadRequest("ID inválido fornecido para exclusão de usuário.");
             }
 
             var usuarioDeletado = _usuarioService.Deletar(id);
@@ -120,10 +124,11 @@ namespace ReservaFacil.API.Controllers
             if (!usuarioDeletado)
             {
                 _logger.LogWarning($"Usuário com ID {id} não encontrado.");
-                return NotFound($"Usuário com ID {id} não encontrado.");
+
+                return ErroNotFound($"Usuário com ID {id} não encontrado.");
             }
 
-            return NoContent();
+            return RespostaOk(id, "Usuário excluído com sucesso.");
         }
     }
 }
