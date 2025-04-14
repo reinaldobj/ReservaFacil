@@ -44,7 +44,97 @@ public class ReservaService : IReservaService
         return _mapper.Map<ReservaOutputDto>(reserva);
     }
 
-    private void ValidarReserva(ReservaInputDto reservaInputDto, UsuarioOutputDto usuario, EspacoOutputDto espaco)
+    public bool Atualizar(Guid id, ReservaInputDto reservaInputDto)
+    {
+        var reserva = _reservaRepository.ObterPorId(id);
+        if (reserva == null)
+        {
+            throw new Exception("Reserva não encontrada.");
+        }
+
+        var usuario = _usuarioService.ObterPorId(reservaInputDto.UsuarioId);
+        var espaco = _espacoService.ObterPorId(reservaInputDto.EspacoId);
+
+        ValidarReserva(reservaInputDto, usuario, espaco);
+
+        reserva.DataInicio = reservaInputDto.DataInicio;
+        reserva.DataFim = reservaInputDto.DataFim;
+        reserva.StatusReserva = Enum.Parse<StatusReserva>(reservaInputDto.StatusReserva);
+
+        _reservaRepository.Atualizar(id,reserva);
+        return true;
+    }
+
+    public bool Deletar(Guid id)
+    {
+        var reserva = _reservaRepository.ObterPorId(id);
+        if (reserva == null)
+        {
+            throw new NotFoundException("Reserva não encontrada.");
+        }
+
+        if(reserva.DataInicio <= DateTime.Now)
+        {
+            throw new BusinessException("Não é possível cancelar uma reserva que já começou.");
+        }
+
+        if(reserva.DataInicio <= DateTime.Now.AddHours(1))
+        {
+            throw new BusinessException("Não é possível cancelar uma reserva com menos de 1 hora de antecedência.");
+        }
+
+        if(reserva.StatusReserva == StatusReserva.Cancelada)
+        {
+            throw new BusinessException("Reserva já cancelada.");
+        }
+
+        reserva.StatusReserva = StatusReserva.Cancelada;
+        _reservaRepository.Atualizar(id, reserva);
+        return true;
+    }
+
+    public List<ReservaOutputDto> Listar()
+    {
+        var reservas = _reservaRepository.Listar();
+        return _mapper.Map<List<ReservaOutputDto>>(reservas);
+    }
+
+    public List<ReservaOutputDto> ListarPorUsuario(Guid usuarioId)
+    {
+        var reservas = _reservaRepository.ObterPorUsuarioId(usuarioId);
+        return _mapper.Map<List<ReservaOutputDto>>(reservas);
+    }
+
+    public List<ReservaOutputDto> ListarPorEspaco(Guid espacoId)
+    {
+        var reservas = _reservaRepository.ObterPorEspacoId(espacoId);
+        return _mapper.Map<List<ReservaOutputDto>>(reservas);
+    }
+
+    public ReservaOutputDto ObterPorId(Guid id)
+    {
+        var reserva = _reservaRepository.ObterPorId(id);
+        if (reserva == null)
+        {
+            throw new Exception("Reserva não encontrada.");
+        }
+
+        return _mapper.Map<ReservaOutputDto>(reserva);
+    }
+
+    public List<ReservaOutputDto> ListarPorUsuario(string email)
+    {
+        var usuario = _usuarioService.ObterPorEmail(email);
+        if (usuario == null)
+        {
+            throw new Exception("Usuário não encontrado.");
+        }
+
+        var reservas = _reservaRepository.ObterPorUsuarioId(usuario.Id);
+        return _mapper.Map<List<ReservaOutputDto>>(reservas);
+    }
+
+        private void ValidarReserva(ReservaInputDto reservaInputDto, UsuarioOutputDto usuario, EspacoOutputDto espaco)
     {
         if (usuario == null)
         {
@@ -96,80 +186,5 @@ public class ReservaService : IReservaService
         {
             throw new BusinessException("Conflito de horário com outra reserva.");
         }
-    }
-
-    public bool Atualizar(Guid id, ReservaInputDto reservaInputDto)
-    {
-        var reserva = _reservaRepository.ObterPorId(id);
-        if (reserva == null)
-        {
-            throw new Exception("Reserva não encontrada.");
-        }
-
-        var usuario = _usuarioService.ObterPorId(reservaInputDto.UsuarioId);
-        var espaco = _espacoService.ObterPorId(reservaInputDto.EspacoId);
-
-        ValidarReserva(reservaInputDto, usuario, espaco);
-
-        reserva.DataInicio = reservaInputDto.DataInicio;
-        reserva.DataFim = reservaInputDto.DataFim;
-        reserva.StatusReserva = Enum.Parse<StatusReserva>(reservaInputDto.StatusReserva);
-
-        _reservaRepository.Atualizar(id,reserva);
-        return true;
-    }
-
-    public bool Deletar(Guid id)
-    {
-        var reserva = _reservaRepository.ObterPorId(id);
-        if (reserva == null)
-        {
-            throw new Exception("Reserva não encontrada.");
-        }
-
-        reserva.StatusReserva = StatusReserva.Cancelada;
-        _reservaRepository.Atualizar(id, reserva);
-        return true;
-    }
-
-    public List<ReservaOutputDto> Listar()
-    {
-        var reservas = _reservaRepository.Listar();
-        return _mapper.Map<List<ReservaOutputDto>>(reservas);
-    }
-
-    public List<ReservaOutputDto> ListarPorUsuario(Guid usuarioId)
-    {
-        var reservas = _reservaRepository.ObterPorUsuarioId(usuarioId);
-        return _mapper.Map<List<ReservaOutputDto>>(reservas);
-    }
-
-    public List<ReservaOutputDto> ListarPorEspaco(Guid espacoId)
-    {
-        var reservas = _reservaRepository.ObterPorEspacoId(espacoId);
-        return _mapper.Map<List<ReservaOutputDto>>(reservas);
-    }
-
-    public ReservaOutputDto ObterPorId(Guid id)
-    {
-        var reserva = _reservaRepository.ObterPorId(id);
-        if (reserva == null)
-        {
-            throw new Exception("Reserva não encontrada.");
-        }
-
-        return _mapper.Map<ReservaOutputDto>(reserva);
-    }
-
-    public List<ReservaOutputDto> ListarPorUsuario(string email)
-    {
-        var usuario = _usuarioService.ObterPorEmail(email);
-        if (usuario == null)
-        {
-            throw new Exception("Usuário não encontrado.");
-        }
-
-        var reservas = _reservaRepository.ObterPorUsuarioId(usuario.Id);
-        return _mapper.Map<List<ReservaOutputDto>>(reservas);
     }
 }
