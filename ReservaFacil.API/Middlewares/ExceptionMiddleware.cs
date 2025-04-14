@@ -46,7 +46,7 @@ public class ExceptionMiddleware
             {
                 StatusCodes.Status400BadRequest => ex.Message,
                 StatusCodes.Status404NotFound => ex.Message,
-                _ => ex.Message
+                _ => "Desculpe, algo deu errado. Por favor, tente novamente mais tarde."
             };
 
             var response = ApiResponse<string>.Erro(mensagem, statusCode);
