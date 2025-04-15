@@ -27,15 +27,15 @@ public class AuthService : IAuthService
         _tokenService = tokenService;
     }
 
-    public LoginOutputDto Login(LoginInputDto loginInputDto)
+    public LoginOutputDto? Login(LoginInputDto loginInputDto)
     {
         var usuario = _usuarioRepository.ObterPorEmail(loginInputDto.Email);
 
         if (usuario == null)
-            throw new Exception("Usuário não encontrado.");
+            return null;
 
         if (!BCrypt.Net.BCrypt.Verify(loginInputDto.Senha, usuario.SenhaHash))
-            throw new Exception("Senha incorreta.");
+            return null;
 
         var token = _tokenService.GerarToken(usuario);
         return new LoginOutputDto

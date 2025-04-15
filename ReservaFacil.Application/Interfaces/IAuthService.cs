@@ -5,5 +5,5 @@ namespace ReservaFacil.Application.Interfaces;
 
 public interface IAuthService
 {
-    LoginOutputDto Login(LoginInputDto loginInputDto);
+    LoginOutputDto? Login(LoginInputDto loginInputDto);
 }
