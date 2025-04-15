@@ -54,7 +54,11 @@ public class ExceptionMiddleware
             context.Response.StatusCode = (int)statusCode;
             context.Response.Headers.Append("X-Trace-Id", traceId);
 
-            var json = JsonSerializer.Serialize(response);
+            var json = JsonSerializer.Serialize(response, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            });
+
             await context.Response.WriteAsync(json);
 
         }
