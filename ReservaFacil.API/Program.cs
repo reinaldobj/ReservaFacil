@@ -47,11 +47,15 @@ builder.Services.AddSwaggerGen(options =>
 var connection = String.Empty;
 
 if(builder.Environment.IsDevelopment()){
-    builder.Configuration.AddEnvironmentVariables().AddJsonFile("appsettings.Development.json");
+    builder.Configuration
+    .AddUserSecrets<Program>()
+    .AddEnvironmentVariables()
+    .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
+
     connection = builder.Configuration.GetConnectionString("DefaultConnection");
 }
 else{
-    connection = builder.Configuration.GetConnectionString("DefaultConnection");
+    connection = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") ?? throw new InvalidOperationException("String de conexão não configurada.");
 }
 
 builder.Services.AddDbContext<ReservaFacilDbContext>(options =>
