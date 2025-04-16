@@ -168,7 +168,7 @@ namespace ReservaFacil.API.Controllers
                 return false;
             }
 
-            return AutorizacaoHelper.EhUsuarioAutorizado(HttpContext, reserva.UsuarioId);
+            return AutorizacaoHelper.EhUsuarioAutorizado(HttpContext, reserva.Usuario.Id);
         }
     }
 }
