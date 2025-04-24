@@ -40,6 +40,7 @@ public class AuthService : IAuthService
         var token = _tokenService.GerarToken(usuario);
         return new LoginOutputDto
         {
+            Id = usuario.Id,
             Nome = usuario.Nome,
             Email = usuario.Email,
             TipoUsuario = usuario.TipoUsuario.ToString(),
