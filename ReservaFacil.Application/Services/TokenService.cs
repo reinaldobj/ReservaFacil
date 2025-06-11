@@ -24,7 +24,9 @@ public class TokenService : ITokenService
 
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, usuario.Email),
+            // Sub (Subject) agora utiliza o identificador unico do usuario para
+            // facilitar a validacao de autorizacao.
+            new Claim(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.Role, usuario.TipoUsuario.ToString())
         };
