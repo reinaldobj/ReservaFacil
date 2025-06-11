@@ -1,12 +1,7 @@
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using ReservaFacil.Application.DTOs.Login;
 using ReservaFacil.Application.Interfaces;
-using ReservaFacil.Domain.Entities;
 using ReservaFacil.Infrastructure.Data.Repositories.Interfaces;
 
 namespace ReservaFacil.Application.Services;

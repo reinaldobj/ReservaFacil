@@ -2,6 +2,7 @@ using System;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using ReservaFacil.Application.DTOs;
 using ReservaFacil.Application.DTOs.Usuario;
 using ReservaFacil.Domain.Enums;
 using Xunit;

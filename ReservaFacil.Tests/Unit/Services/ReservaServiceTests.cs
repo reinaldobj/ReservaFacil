@@ -1,7 +1,6 @@
-using System;
 using AutoMapper;
 using Moq;
-using ReservaFacil.Application.DTOs.Reserva;
+using ReservaFacil.Application.Interfaces;
 using ReservaFacil.Application.Services;
 using ReservaFacil.Domain.Entities;
 using ReservaFacil.Domain.Exceptions;

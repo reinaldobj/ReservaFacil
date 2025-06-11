@@ -1,5 +1,6 @@
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.InMemory;
 using ReservaFacil.API.Middlewares;
 using ReservaFacil.Application.Interfaces;
 using ReservaFacil.Application.Mappings;
@@ -46,22 +47,43 @@ builder.Services.AddSwaggerGen(options =>
 
 var connection = String.Empty;
 
-if(builder.Environment.IsDevelopment()){
+if (builder.Environment.IsDevelopment()){
     builder.Configuration
     .AddUserSecrets<Program>()
     .AddEnvironmentVariables()
     .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
 
     connection = builder.Configuration.GetConnectionString("DefaultConnection");
+
+    builder.Services.AddDbContext<ReservaFacilDbContext>(opts =>
+    opts.UseSqlServer(connection));
 }
-else{
+else if (builder.Environment.IsEnvironment("Testing"))
+{
+    connection = "DataSource=:memory:";
+
+    builder.Services.AddDbContext<ReservaFacilDbContext>(opts =>
+    opts.UseInMemoryDatabase("ReservaFacil_TestDb"));
+}
+else
+{
     connection = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") ?? throw new InvalidOperationException("String de conexão não configurada.");
+
+    builder.Services.AddDbContext<ReservaFacilDbContext>(opts =>
+        opts.UseSqlServer(connection));
 }
 
-builder.Services.AddDbContext<ReservaFacilDbContext>(options =>
-    options.UseSqlServer(connection));
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(
+    cfg => {
+       // configurações adicionais, se houver  
+    },
+    // lista só seus assemblies de profiles
+    typeof(EspacoProfile).Assembly,
+    typeof(UsuarioProfile).Assembly,
+    typeof(ReservaProfile).Assembly
+);
 
 builder.Services.AddScoped<IEspacoRepository, EspacoRepository>();
 builder.Services.AddScoped<IEspacoService, EspacoService>();
