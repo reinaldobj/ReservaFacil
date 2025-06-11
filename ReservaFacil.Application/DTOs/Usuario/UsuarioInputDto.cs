@@ -15,7 +15,7 @@ public class UsuarioInputDto
     public String Email { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(100, ErrorMessage = "A senha deve ter no máximo 16 caracteres.")]
+    [StringLength(16, ErrorMessage = "A senha deve ter no máximo 16 caracteres.")]
     [MinLength(6, ErrorMessage = "A senha deve ter no mínimo 6 caracteres.")]
     public String Senha { get; set; } = string.Empty;
 
