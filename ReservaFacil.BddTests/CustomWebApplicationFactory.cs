@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ReservaFacil.Infrastructure.Data;
 
-namespace ReservaFacil.Tests.Integration
+namespace ReservaFacil.UnitTests.Integration
 {
     public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
