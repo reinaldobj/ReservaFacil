@@ -12,7 +12,7 @@ using ReservaFacil.Domain.Enums;
 using ReservaFacil.Infrastructure.Data;
 using Xunit;
 
-namespace ReservaFacil.Tests.Integration;
+namespace ReservaFacil.UnitTests.Integration;
 
 public class ReservaControllerIntegrationTests : IClassFixture<CustomWebApplicationFactory>
 {

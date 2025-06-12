@@ -9,13 +9,13 @@ Funcionalidade: Reserva de Espaços
   @sucesso
   Cenário: Criar reserva em horário livre
     Dado que estou autenticado com token válido
-    Quando eu enviar um POST para "/api/reservas" com o body:
+    Quando eu enviar um POST para "/api/Reserva" com o body:
       """
       {
         "espacoId": 42,
         "usuarioId": 1,
-        "dataHoraInicio": "2025-07-01T10:00:00",
-        "dataHoraFim":    "2025-07-01T11:00:00"
+        "dataInicio": "2025-07-01T10:00:00",
+        "dataFim": "2025-07-01T11:00:00"
       }
       """
     Então o status da resposta deve ser 201
@@ -28,13 +28,13 @@ Funcionalidade: Reserva de Espaços
   Cenário: Criar reserva em horário já reservado
     Dado que já existe uma reserva no espaço 42 entre "2025-07-01T10:00:00" e "2025-07-01T11:00:00"
     Dado que estou autenticado com token válido
-    Quando eu enviar um POST para "/api/reservas" com o body:
+    Quando eu enviar um POST para "/api/Reserva" com o body:
       """
       {
         "espacoId": 42,
         "usuarioId": 2,
-        "dataHoraInicio": "2025-07-01T10:30:00",
-        "dataHoraFim":    "2025-07-01T11:30:00"
+        "dataInicio": "2025-07-01T10:30:00",
+        "dataFim": "2025-07-01T11:30:00"
       }
       """
     Então o status da resposta deve ser 409

@@ -9,7 +9,7 @@ using ReservaFacil.Domain.Entities;
 using ReservaFacil.Domain.Enums;
 using ReservaFacil.Infrastructure.Data;
 
-namespace ReservaFacil.Tests.Integration;
+namespace ReservaFacil.UnitTests.Integration;
 
 internal static class TestHelper
 {

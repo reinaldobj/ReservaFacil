@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservaFacil.Domain", "Rese
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservaFacil.Infrastructure", "ReservaFacil.Infrastructure\ReservaFacil.Infrastructure.csproj", "{313D0004-4D8B-4F45-B83C-C2596B57A18A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservaFacil.Tests", "ReservaFacil.Tests\ReservaFacil.Tests.csproj", "{758490F2-B197-498F-8E9A-B1F52DC42DD7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservaFacil.UnitTests", "ReservaFacil.UnitTests\ReservaFacil.UnitTests.csproj", "{758490F2-B197-498F-8E9A-B1F52DC42DD7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservaFacil.BddTests", "ReservaFacil.BddTests\ReservaFacil.BddTests.csproj", "{C94DF4D9-B3F8-4BC9-9521-BC1747309BCD}"
 EndProject

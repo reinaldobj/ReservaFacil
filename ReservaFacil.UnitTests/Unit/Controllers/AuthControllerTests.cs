@@ -8,7 +8,7 @@ using ReservaFacil.Application.DTOs.Login;
 using ReservaFacil.Application.Interfaces;
 using Xunit;
 
-namespace ReservaFacil.Tests.Unit.Controllers
+namespace ReservaFacil.UnitTests.Unit.Controllers
 {
     public class AuthControllerTests
     {

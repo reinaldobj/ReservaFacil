@@ -9,11 +9,11 @@ Funcionalidade: Autenticação
 
   @sucesso
   Cenário: Login com credenciais válidas
-    Quando eu enviar um POST para "/api/auth/login" com o body:
+    Quando eu enviar um POST para "/api/Auth/login" com o body:
       """
       {
         "email": "user@test.com",
-        "password": "P@ssw0rd"
+        "senha": "P@ssw0rd"
       }
       """
     Então o status da resposta deve ser 200
@@ -21,11 +21,11 @@ Funcionalidade: Autenticação
 
   @erro
   Cenário: Login com credenciais inválidas
-    Quando eu enviar um POST para "/api/auth/login" com o body:
+    Quando eu enviar um POST para "/api/Auth/login" com o body:
       """
       {
         "email": "user@test.com",
-        "password": "senhaErrada"
+        "senha": "senhaErrada"
       }
       """
     Então o status da resposta deve ser 401

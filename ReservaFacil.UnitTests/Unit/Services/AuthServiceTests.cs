@@ -8,7 +8,7 @@ using ReservaFacil.Domain.Entities;
 using ReservaFacil.Infrastructure.Data.Repositories.Interfaces;
 using Xunit;
 
-namespace ReservaFacil.Tests.Unit.Services
+namespace ReservaFacil.UnitTests.Unit.Services
 {
     public class AuthServiceTests
     {

@@ -5,12 +5,13 @@ Funcionalidade: Usuário
 
   @sucesso
   Cenário: Cadastrar usuário válido
-    Quando eu enviar um POST para "/api/usuarios" com o body:
+    Quando eu enviar um POST para "/api/Usuario" com o body:
       """
       {
         "nome": "João",
         "email": "joao@test.com",
-        "senha": "P@ss1234"
+        "senha": "P@ss1234",
+        "tipoUsuario": "UsuarioComum"
       }
       """
     Então o status da resposta deve ser 201
@@ -22,12 +23,13 @@ Funcionalidade: Usuário
   @erro
   Cenário: Cadastrar usuário com email já existente
     Dado que já existe um usuário com email "joao@test.com"
-    Quando eu enviar um POST para "/api/usuarios" com o body:
+    Quando eu enviar um POST para "/api/Usuario" com o body:
       """
       {
         "nome": "João2",
         "email": "joao@test.com",
-        "senha": "OutraSenha1"
+        "senha": "OutraSenha1",
+        "tipoUsuario": "UsuarioComum"
       }
       """
     Então o status da resposta deve ser 409

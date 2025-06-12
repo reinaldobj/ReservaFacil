@@ -7,7 +7,7 @@ using ReservaFacil.Application.DTOs.Espaco;
 using ReservaFacil.Application.Interfaces;
 using Xunit;
 
-namespace ReservaFacil.Tests.Unit.Controllers
+namespace ReservaFacil.UnitTests.Unit.Controllers
 {
     public class EspacoControllerTests
     {
