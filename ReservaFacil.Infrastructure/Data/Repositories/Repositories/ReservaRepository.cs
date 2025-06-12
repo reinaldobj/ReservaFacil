@@ -111,7 +111,15 @@ public class ReservaRepository : IReservaRepository
 
     private bool SaveChanges()
     {
-        return _context.SaveChanges() > 0;
+        try
+        {
+            return _context
+                .SaveChanges() > 0;
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return false;
+        }
     }
 
     public bool VerificarConflito(DateTime dataInicio, DateTime DataFim, Guid espacoId)

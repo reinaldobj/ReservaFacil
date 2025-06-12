@@ -16,7 +16,9 @@ public class EspacoRepository : IEspacoRepository
 
     public IEnumerable<Espaco> Listar()
     {
-        return _context.Espacos
+        return _context
+            .Espacos
+            .AsNoTracking()
             .ToList();
     }
 
@@ -76,8 +78,15 @@ public class EspacoRepository : IEspacoRepository
 
     private bool SaveChanges()
     {
-        return _context
-        .SaveChanges() > 0;
+        try
+        {
+            return _context
+                .SaveChanges() > 0;
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return false;
+        }
     }
 
     public Espaco ObterPorNome(string nome)
