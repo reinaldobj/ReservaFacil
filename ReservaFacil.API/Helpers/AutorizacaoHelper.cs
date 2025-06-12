@@ -22,6 +22,6 @@ public static class AutorizacaoHelper
             return true;
         }
 
-        return usuarioTipo.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+        return usuarioTipo.Equals("Administrador", StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -73,8 +73,6 @@ else
         opts.UseSqlServer(connection));
 }
 
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
-
 builder.Services.AddAutoMapper(
     cfg => {
        // configurações adicionais, se houver  

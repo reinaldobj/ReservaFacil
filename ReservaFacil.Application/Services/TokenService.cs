@@ -38,7 +38,7 @@ public class TokenService : ITokenService
             issuer: issuer,
             audience: issuer,
             claims: claims,
-            expires: DateTime.Now.AddHours(2),
+            expires: DateTime.UtcNow.AddHours(2),
             signingCredentials: credenciais
         );
 

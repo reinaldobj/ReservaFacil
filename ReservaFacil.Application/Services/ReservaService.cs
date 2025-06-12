@@ -181,7 +181,6 @@ public class ReservaService : IReservaService
             throw new BusinessException("Reservas não são permitidas aos finais de semana.");
         }
 
-        _reservaRepository.VerificarConflito(reservaInputDto.DataInicio, reservaInputDto.DataFim, espaco.Id);
         if (_reservaRepository.VerificarConflito(reservaInputDto.DataInicio, reservaInputDto.DataFim, espaco.Id))
         {
             throw new BusinessException("Conflito de horário com outra reserva.");

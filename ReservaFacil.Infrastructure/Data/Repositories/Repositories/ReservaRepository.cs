@@ -25,7 +25,9 @@ public class ReservaRepository : IReservaRepository
 
     public Reserva ObterPorId(Guid reservaId)
     {
-        return _context.Reservas
+        return _context
+            .Reservas
+            .AsNoTracking()
             .Include(r => r.Espaco)
             .Include(r => r.Usuario)
             .FirstOrDefault(r => r.Id == reservaId);
@@ -33,15 +35,22 @@ public class ReservaRepository : IReservaRepository
 
     public Reserva Criar(Reserva reserva)
     {
-        _context.Reservas.Add(reserva);
-        _context.SaveChanges();
+        _context
+            .Reservas
+            .Add(reserva);
+
+        _context
+            .SaveChanges();
         
         return reserva;
     }
 
     public bool Atualizar(Guid reservaId, Reserva reserva)
     {
-        var reservaExistente = ObterPorId(reservaId);
+        var reservaExistente = _context
+            .Reservas
+            .FirstOrDefault(r => r.Id == reservaId);
+
         if (reservaExistente == null) return false;
 
         reservaExistente.DataInicio = reserva.DataInicio;
@@ -55,7 +64,10 @@ public class ReservaRepository : IReservaRepository
 
     public bool Deletar(Guid reservaId)
     {
-        var reserva = ObterPorId(reservaId);
+        var reserva = _context
+            .Reservas
+            .FirstOrDefault(r => r.Id == reservaId);
+        
         if (reserva == null) return false;
 
         reserva.StatusReserva = StatusReserva.Cancelada; // ou outro status que represente a exclusão
@@ -66,7 +78,9 @@ public class ReservaRepository : IReservaRepository
 
     public IEnumerable<Reserva> ObterPorEspacoId(Guid espacoId)
     {
-        return _context.Reservas
+        return _context
+            .Reservas
+            .AsNoTracking()
             .Include(r => r.Espaco)
             .Include(r => r.Usuario)
             .Where(r => r.EspacoId == espacoId)
@@ -75,7 +89,9 @@ public class ReservaRepository : IReservaRepository
 
     public IEnumerable<Reserva> ObterPorUsuarioId(Guid usuarioId)
     {
-        return _context.Reservas
+        return _context
+            .Reservas
+            .AsNoTracking()
             .Include(r => r.Espaco)
             .Include(r => r.Usuario)
             .Where(r => r.UsuarioId == usuarioId)
@@ -84,7 +100,9 @@ public class ReservaRepository : IReservaRepository
 
     public IEnumerable<Reserva> ObterPorData(DateTime dataInicial, DateTime dataFinal)
     {
-        return _context.Reservas
+        return _context
+            .Reservas
+            .AsNoTracking()
             .Include(r => r.Espaco)
             .Include(r => r.Usuario)
             .Where(r => r.DataInicio >= dataInicial && r.DataFim <= dataFinal)

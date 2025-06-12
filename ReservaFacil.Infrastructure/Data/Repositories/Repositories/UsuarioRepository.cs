@@ -18,6 +18,7 @@ public class UsuarioRepository : IUsuarioRepository
     {
         return _context
             .Usuarios
+            .AsNoTracking()
             .FirstOrDefault(u => u.Email == email);
     }
 
@@ -25,6 +26,7 @@ public class UsuarioRepository : IUsuarioRepository
     {
         return _context
             .Usuarios
+            .AsNoTracking()
             .FirstOrDefault(u => u.Id == id);
     }
 
@@ -32,6 +34,7 @@ public class UsuarioRepository : IUsuarioRepository
     {
         return _context
             .Usuarios
+            .AsNoTracking()
             .FirstOrDefault(u => u.Nome == nome);
     }
 
@@ -45,7 +48,10 @@ public class UsuarioRepository : IUsuarioRepository
 
     public bool Atualizar(Guid id, Usuario usuario)
     {
-        var usuarioExistente = ObterPorId(id);
+        var usuarioExistente = _context
+            .Usuarios
+            .FirstOrDefault(u => u.Id == id);
+            
         if (usuarioExistente == null) return false;
 
         usuarioExistente.Nome = usuario.Nome;
@@ -58,7 +64,10 @@ public class UsuarioRepository : IUsuarioRepository
 
     public bool Deletar(Guid id)
     {
-        var usuario = ObterPorId(id);
+        var usuario = _context
+            .Usuarios
+            .FirstOrDefault(u => u.Id == id);
+
         if (usuario == null) return false;
 
         _context.Usuarios.Remove(usuario);
@@ -67,7 +76,10 @@ public class UsuarioRepository : IUsuarioRepository
 
     public List<Usuario> Listar()
     {
-        return _context.Usuarios.ToList();
+        return _context
+        .Usuarios
+        .AsNoTracking()
+        .ToList();
     }
 
     private bool SaveChanges()
