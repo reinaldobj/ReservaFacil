@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using ReservaFacil.UnitTests.Integration;
 using TechTalk.SpecFlow;
 using ReservaFacil.API;
 using ReservaFacil.Infrastructure.Data;
@@ -33,7 +34,7 @@ public class ApiSteps
 
     private IServiceProvider Services => _factory.Services;
 
-    [Given(@"que existe um usuário cadastrado com email \"(.*)\" e senha \"(.*)\"")]
+    [Given(@"que existe um usuário cadastrado com email ""(.*)"" e senha ""(.*)""")]
     public void GivenExistingUser(string email, string senha)
     {
         using var scope = Services.CreateScope();
@@ -49,7 +50,7 @@ public class ApiSteps
         db.SaveChanges();
     }
 
-    [Given(@"que existe um espaço com ID (\d+) e nome \"(.*)\"")]
+    [Given(@"que existe um espaço com ID (\d+) e nome ""(.*)""")]
     public void GivenExistingSpace(int id, string nome)
     {
         using var scope = Services.CreateScope();
@@ -67,7 +68,7 @@ public class ApiSteps
         db.SaveChanges();
     }
 
-    [Given(@"já existe um usuário com email \"(.*)\"")]
+    [Given(@"já existe um usuário com email ""(.*)""")]
     public void GivenExistingUserEmail(string email)
     {
         using var scope = Services.CreateScope();
@@ -83,7 +84,7 @@ public class ApiSteps
         db.SaveChanges();
     }
 
-    [Given(@"já existe uma reserva no espaço (\d+) entre \"(.*)\" e \"(.*)\"")]
+    [Given(@"já existe uma reserva no espaço (\d+) entre ""(.*)"" e ""(.*)""")]
     public void GivenExistingReservation(int id, string inicio, string fim)
     {
         using var scope = Services.CreateScope();
@@ -105,7 +106,7 @@ public class ApiSteps
             EspacoId = espacoId,
             DataInicio = DateTime.Parse(inicio),
             DataFim = DateTime.Parse(fim),
-            StatusReserva = "Pendente"
+            StatusReserva = StatusReserva.Pendente
         });
         db.SaveChanges();
     }
@@ -156,13 +157,13 @@ public class ApiSteps
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
-    [When(@"eu enviar um GET para \"(.*)\"")]
+    [When(@"eu enviar um GET para ""(.*)""")]
     public async Task WhenGet(string url)
     {
         _response = await _client.GetAsync(url);
     }
 
-    [When(@"eu enviar um POST para \"(.*)\" com o body:")]
+    [When(@"eu enviar um POST para ""(.*)"" com o body:")]
     public async Task WhenPostWithBody(string url, string body)
     {
         _response = await _client.PostAsync(url, new StringContent(body, Encoding.UTF8, "application/json"));
@@ -174,7 +175,7 @@ public class ApiSteps
         ((int)_response!.StatusCode).Should().Be(status);
     }
 
-    [Then(@"o corpo da resposta deve conter um campo \"(.*)\" não vazio")]
+    [Then(@"o corpo da resposta deve conter um campo ""(.*)"" não vazio")]
     public async Task ThenBodyHasField(string field)
     {
         var json = await _response!.Content.ReadAsStringAsync();
@@ -196,7 +197,7 @@ public class ApiSteps
         await ThenBodyContains(expected);
     }
 
-    [Then(@"o header \"(.*)\" deve apontar para \"(.*)\"")]
+    [Then(@"o header ""(.*)"" deve apontar para ""(.*)""")]
     public void ThenHeaderLocation(string header, string value)
     {
         _response!.Headers.Location!.ToString().Should().Contain(value.Trim('{', '}'));

@@ -7,7 +7,7 @@ using ReservaFacil.Application.DTOs.Usuario;
 using ReservaFacil.Domain.Enums;
 using Xunit;
 
-namespace ReservaFacil.Tests.Integration;
+namespace ReservaFacil.UnitTests.Integration;
 
 public class UsuarioControllerIntegrationTests : IClassFixture<CustomWebApplicationFactory>
 {

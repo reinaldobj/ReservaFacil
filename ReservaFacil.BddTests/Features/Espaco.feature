@@ -6,7 +6,7 @@ Funcionalidade: Gerenciamento de Espaços
   @sucesso
   Cenário: Buscar espaço existente por ID
     Dado que existe um espaço com ID 42 e nome "Sala A"
-    Quando eu enviar um GET para "/api/espacos/42"
+    Quando eu enviar um GET para "/api/Espaco/42"
     Então o status da resposta deve ser 200
     E o corpo deve conter:
       """
@@ -15,7 +15,7 @@ Funcionalidade: Gerenciamento de Espaços
 
   @erro
   Cenário: Buscar espaço inexistente
-    Quando eu enviar um GET para "/api/espacos/9999"
+    Quando eu enviar um GET para "/api/Espaco/9999"
     Então o status da resposta deve ser 404
     E o corpo deve conter:
       """
@@ -24,22 +24,26 @@ Funcionalidade: Gerenciamento de Espaços
 
   @sucesso
   Cenário: Criar novo espaço com dados válidos
-    Quando eu enviar um POST para "/api/espacos" com o body:
+    Quando eu enviar um POST para "/api/Espaco" com o body:
       """
       {
         "nome": "Sala B",
-        "capacidade": 10
+        "descricao": "Sala de reunião",
+        "capacidade": 10,
+        "tipoEspaco": "SalaDeReuniao"
       }
       """
     Então o status da resposta deve ser 201
-    E o header "Location" deve apontar para "/api/espacos/{id}"
+    E o header "Location" deve apontar para "/api/Espaco/{id}"
 
   @erro
   Cenário: Criar espaço sem nome
-    Quando eu enviar um POST para "/api/espacos" com o body:
+    Quando eu enviar um POST para "/api/Espaco" com o body:
       """
       {
-        "capacidade": 10
+        "descricao": "Sala",
+        "capacidade": 10,
+        "tipoEspaco": "SalaDeReuniao"
       }
       """
     Então o status da resposta deve ser 400
