@@ -84,6 +84,14 @@ public class UsuarioRepository : IUsuarioRepository
 
     private bool SaveChanges()
     {
-        return _context.SaveChanges() > 0;
+        try
+        {
+            return _context
+                .SaveChanges() > 0;
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return false;
+        }
     }
 }
