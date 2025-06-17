@@ -5,6 +5,7 @@ using ReservaFacil.Application.DTOs.Usuario;
 using ReservaFacil.Application.Interfaces;
 using ReservaFacil.Domain.Entities;
 using ReservaFacil.Infrastructure.Data.Repositories.Interfaces;
+using ReservaFacil.Domain.Exceptions;
 
 namespace ReservaFacil.Application.Services;
 
@@ -41,7 +42,7 @@ public class UsuarioService : IUsuarioService
     {
         var usuarioExistente = _usuarioRepository.ObterPorEmail(usuarioInputDto.Email);
         if (usuarioExistente != null) 
-            throw new ValidationException($"O email {usuarioInputDto.Email} já está em uso.");
+            throw new Domain.Exceptions.ValidationException($"O email {usuarioInputDto.Email} já está em uso.");
 
         var usuario = _mapper.Map<Usuario>(usuarioInputDto);
 
@@ -54,7 +55,7 @@ public class UsuarioService : IUsuarioService
     {
         var usuario = _usuarioRepository.ObterPorId(id);
         if (usuario == null) 
-            throw new ValidationException($"Usuário com ID {id} não encontrado.");
+            throw new Domain.Exceptions.ValidationException($"Usuário com ID {id} não encontrado.");
 
         _mapper.Map(usuarioInputDto, usuario);
         _usuarioRepository.Atualizar(id, usuario);
@@ -65,7 +66,7 @@ public class UsuarioService : IUsuarioService
     {
         var usuario = _usuarioRepository.ObterPorId(id);
         if (usuario == null) 
-            throw new ValidationException($"Usuário com ID {id} não encontrado.");
+            throw new Domain.Exceptions.ValidationException($"Usuário com ID {id} não encontrado.");
 
         _usuarioRepository.Deletar(usuario.Id);
         return true;

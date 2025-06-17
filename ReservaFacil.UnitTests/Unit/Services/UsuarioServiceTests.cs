@@ -29,7 +29,7 @@ namespace ReservaFacil.UnitTests.Unit.Services
             var service = new UsuarioService(repo.Object, _mapper);
             var dto = new UsuarioInputDto { Nome = "User", Email = "exist@test.com", Senha = "123456", TipoUsuario = "Administrador" };
 
-            Assert.Throws<ValidationException>(() => service.Criar(dto));
+            Assert.Throws<Domain.Exceptions.ValidationException>(() => service.Criar(dto));
         }
     }
 }

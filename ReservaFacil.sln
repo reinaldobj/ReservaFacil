@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservaFacil.UnitTests", "R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservaFacil.BddTests", "ReservaFacil.BddTests\ReservaFacil.BddTests.csproj", "{C94DF4D9-B3F8-4BC9-9521-BC1747309BCD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservaFacil.BddTests", "ReservaFacil.BddTests\ReservaFacil.BddTests.csproj", "{C94DF4D9-B3F8-4BC9-9521-BC1747309BCD}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,10 +41,10 @@ Global
 		{758490F2-B197-498F-8E9A-B1F52DC42DD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{758490F2-B197-498F-8E9A-B1F52DC42DD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{758490F2-B197-498F-8E9A-B1F52DC42DD7}.Release|Any CPU.Build.0 = Release|Any CPU
-                {C94DF4D9-B3F8-4BC9-9521-BC1747309BCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-                {C94DF4D9-B3F8-4BC9-9521-BC1747309BCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-                {C94DF4D9-B3F8-4BC9-9521-BC1747309BCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-                {C94DF4D9-B3F8-4BC9-9521-BC1747309BCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C94DF4D9-B3F8-4BC9-9521-BC1747309BCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C94DF4D9-B3F8-4BC9-9521-BC1747309BCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C94DF4D9-B3F8-4BC9-9521-BC1747309BCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C94DF4D9-B3F8-4BC9-9521-BC1747309BCD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,6 +13,7 @@ using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +62,10 @@ if (builder.Environment.IsDevelopment()){
 else if (builder.Environment.IsEnvironment("Testing"))
 {
     connection = "DataSource=:memory:";
+
+    var inMemoryRoot = new InMemoryDatabaseRoot();
+
+    builder.Services.AddSingleton(inMemoryRoot);
 
     builder.Services.AddDbContext<ReservaFacilDbContext>(opts =>
     opts.UseInMemoryDatabase("ReservaFacil_TestDb"));

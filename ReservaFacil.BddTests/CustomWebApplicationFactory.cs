@@ -32,8 +32,8 @@ namespace ReservaFacil.UnitTests.Integration
                 var sp = services.BuildServiceProvider();
                 using var scope = sp.CreateScope();
                 var db = scope.ServiceProvider.GetRequiredService<ReservaFacilDbContext>();
-                db.Database.EnsureDeleted();
-                db.Database.EnsureCreated();
+                // db.Database.EnsureDeleted();
+                // db.Database.EnsureCreated();
             });
         }
     }

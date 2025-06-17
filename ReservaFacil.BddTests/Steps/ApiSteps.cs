@@ -50,25 +50,50 @@ public class ApiSteps
         db.SaveChanges();
     }
 
+    [Given(@"que existe um usuário cadastrado com o id (\d+)")]
+    public void GivenExistingUserWithId(int id)
+    {
+        using var scope = Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ReservaFacilDbContext>();
+        var guid = IntToGuid(id);
+
+        if (!db.Usuarios.Any(e => e.Id == guid))
+        {
+            db.Usuarios.Add(new Usuario
+            {
+                Id = guid,
+                Nome = "User" + Guid.NewGuid(),
+                Email = $"user{Guid.NewGuid()}@teste.com",
+                SenhaHash = BCrypt.Net.BCrypt.HashPassword("P@ssw0rd"),
+                TipoUsuario = TipoUsuario.UsuarioComum
+            });
+            db.SaveChanges();
+        }
+    }
+
     [Given(@"que existe um espaço com ID (\d+) e nome ""(.*)""")]
     public void GivenExistingSpace(int id, string nome)
     {
         using var scope = Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ReservaFacilDbContext>();
         var guid = IntToGuid(id);
-        db.Espacos.Add(new Espaco
+
+        if (!db.Espacos.Any(e => e.Id == guid))
         {
-            Id = guid,
-            Nome = nome,
-            Descricao = "desc",
-            Capacidade = 10,
-            TipoEspaco = TipoEspaco.Coworking,
-            Disponivel = true
-        });
-        db.SaveChanges();
+            db.Espacos.Add(new Espaco
+            {
+                Id = guid,
+                Nome = nome + Guid.NewGuid().ToString(),
+                Descricao = "desc" + Guid.NewGuid().ToString(),
+                Capacidade = 10,
+                TipoEspaco = TipoEspaco.Coworking,
+                Disponivel = true
+            });
+            db.SaveChanges();
+        }
     }
 
-    [Given(@"já existe um usuário com email ""(.*)""")]
+    [Given(@"que já existe um usuário com email ""(.*)""")]
     public void GivenExistingUserEmail(string email)
     {
         using var scope = Services.CreateScope();
@@ -84,7 +109,7 @@ public class ApiSteps
         db.SaveChanges();
     }
 
-    [Given(@"já existe uma reserva no espaço (\d+) entre ""(.*)"" e ""(.*)""")]
+    [Given(@"que já existe uma reserva no espaço (\d+) entre ""(.*)"" e ""(.*)""")]
     public void GivenExistingReservation(int id, string inicio, string fim)
     {
         using var scope = Services.CreateScope();
@@ -99,7 +124,8 @@ public class ApiSteps
             TipoUsuario = TipoUsuario.UsuarioComum
         };
         db.Usuarios.Add(usuario);
-        db.Reservas.Add(new Reserva
+
+        var reserva = new Reserva
         {
             Id = Guid.NewGuid(),
             UsuarioId = usuario.Id,
@@ -107,7 +133,9 @@ public class ApiSteps
             DataInicio = DateTime.Parse(inicio),
             DataFim = DateTime.Parse(fim),
             StatusReserva = StatusReserva.Pendente
-        });
+        };
+
+        db.Reservas.Add(reserva);
         db.SaveChanges();
     }
 
@@ -132,7 +160,7 @@ public class ApiSteps
         }
     }
 
-    [Given(@"estou autenticado com token válido")]
+    [Given(@"que estou autenticado com token válido")]
     public async Task GivenAuthenticated()
     {
         var email = $"user{Guid.NewGuid()}@test.com";
@@ -157,6 +185,31 @@ public class ApiSteps
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
+    [Given(@"que estou autenticado como Admin com token válido")]
+    public async Task GivenAdminAuthenticated()
+    {
+        var email = $"user{Guid.NewGuid()}@test.com";
+        var password = "P@ssw0rd";
+        using (var scope = Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ReservaFacilDbContext>();
+            db.Usuarios.Add(new Usuario
+            {
+                Id = Guid.NewGuid(),
+                Nome = "User",
+                Email = email,
+                SenhaHash = BCrypt.Net.BCrypt.HashPassword(password),
+                TipoUsuario = TipoUsuario.Administrador
+            });
+            db.SaveChanges();
+        }
+        var login = await _client.PostAsJsonAsync("/api/Auth/login", new { Email = email, Senha = password });
+        login.EnsureSuccessStatusCode();
+        var data = await login.Content.ReadFromJsonAsync<ApiResponse<LoginOutputDto>>();
+        var token = data!.Dados.Token;
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    }
+
     [When(@"eu enviar um GET para ""(.*)""")]
     public async Task WhenGet(string url)
     {
@@ -167,6 +220,8 @@ public class ApiSteps
     public async Task WhenPostWithBody(string url, string body)
     {
         _response = await _client.PostAsync(url, new StringContent(body, Encoding.UTF8, "application/json"));
+
+        Console.WriteLine(await _response.Content.ReadAsStringAsync());
     }
 
     [Then(@"o status da resposta deve ser (\d+)")]
@@ -184,23 +239,51 @@ public class ApiSteps
         token.Should().NotBeNullOrEmpty();
     }
 
-    [Then(@"o corpo da resposta deve conter:")]
-    public async Task ThenBodyContains(string expected)
+    [Then(@"o corpo da resposta deve conter um campo ""(.*)"" dentro de dados com o valor ""(.*)""")]
+    public async Task ThenDataHasField(string field, string value)
     {
         var json = await _response!.Content.ReadAsStringAsync();
-        json.Should().Contain(expected.Trim());
+        using var doc = JsonDocument.Parse(json);
+        var token = doc.RootElement.GetProperty("dados").GetProperty(field).GetString();
+        token.Should().NotBeNullOrEmpty();
     }
 
-    [Then(@"o corpo deve conter:")]
+    [Then(@"o corpo da resposta deve conter um campo ""(.*)"" com o valor ""(.*)""")]
+    public async Task ThenBodyContains(string field, string value)
+    {
+        var json = await _response!.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(json);
+        var resultado = doc.RootElement.GetProperty(field).GetString();
+        resultado.Should().Be(value);
+    }
+
+    [Then(@"o corpo da resposta deve conter ""(.*)""")]
     public async Task ThenBodyContainsAlt(string expected)
     {
-        await ThenBodyContains(expected);
+        var json = await _response!.Content.ReadAsStringAsync();
+        json.Should().Contain(expected);
     }
 
     [Then(@"o header ""(.*)"" deve apontar para ""(.*)""")]
-    public void ThenHeaderLocation(string header, string value)
+    public void ThenHeaderLocation(string headerName, string expectedPattern)
     {
-        _response!.Headers.Location!.ToString().Should().Contain(value.Trim('{', '}'));
+        var headerValue = _response!.Headers.GetValues(headerName).First();
+        var pattern = expectedPattern.Trim();
+
+        const string placeholder = "{id}";
+        if (pattern.Contains(placeholder))
+        {
+            var parts = headerValue.Split(new[] { "id=" }, StringSplitOptions.None);
+            var idValue = parts[1];
+
+            var value = expectedPattern.Replace($"/{placeholder}", $"?id={ idValue }");
+            headerValue.Should().Contain(value);
+        }
+        else
+        {
+            headerValue.Should().Be(pattern);
+        }
+
     }
 
     private static Guid IntToGuid(int id)

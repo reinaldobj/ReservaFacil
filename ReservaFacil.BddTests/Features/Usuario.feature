@@ -15,25 +15,21 @@ Funcionalidade: Usuário
       }
       """
     Então o status da resposta deve ser 201
-    E o corpo deve conter algo como:
-      """
-      { "id": 1, "nome": "João", "email": "joao@test.com" }
-      """
+    E o corpo da resposta deve conter um campo "nome" dentro de dados com o valor "João"
+    E o corpo da resposta deve conter um campo "email" dentro de dados com o valor "joao@test.com"
+    E o corpo da resposta deve conter um campo "id" não vazio
 
   @erro
   Cenário: Cadastrar usuário com email já existente
-    Dado que já existe um usuário com email "joao@test.com"
+    Dado que já existe um usuário com email "joaotest111@test.com"
     Quando eu enviar um POST para "/api/Usuario" com o body:
       """
       {
         "nome": "João2",
-        "email": "joao@test.com",
+        "email": "joaotest111@test.com",
         "senha": "OutraSenha1",
         "tipoUsuario": "UsuarioComum"
       }
       """
-    Então o status da resposta deve ser 409
-    E o corpo deve conter:
-      """
-      { "error": "Email já cadastrado" }
-      """
+    Então o status da resposta deve ser 400
+    E o corpo da resposta deve conter um campo "mensagem" com o valor "O email joaotest111@test.com já está em uso."

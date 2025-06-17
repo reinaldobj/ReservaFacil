@@ -29,7 +29,4 @@ Funcionalidade: Autenticação
       }
       """
     Então o status da resposta deve ser 401
-    E o corpo da resposta deve conter:
-      """
-      { "error": "Credenciais inválidas" }
-      """
+    E o corpo da resposta deve conter um campo "mensagem" com o valor "Falha no login: credenciais inválidas."

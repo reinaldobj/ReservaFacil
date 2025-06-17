@@ -33,6 +33,7 @@ public class ReservaService : IReservaService
     {
         var usuario = _usuarioService.ObterPorId(reservaInputDto.UsuarioId);
         var espaco = _espacoService.ObterPorId(reservaInputDto.EspacoId);
+        reservaInputDto.StatusReserva = StatusReserva.Pendente.ToString();
 
         ValidarReserva(reservaInputDto, usuario, espaco);
 

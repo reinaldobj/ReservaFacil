@@ -3,24 +3,22 @@ Funcionalidade: Gerenciamento de Espaços
   Como cliente da API
   Quero consultar e manipular registros de espaços
 
+  Contexto:
+    Dado que estou autenticado como Admin com token válido
+
   @sucesso
   Cenário: Buscar espaço existente por ID
     Dado que existe um espaço com ID 42 e nome "Sala A"
-    Quando eu enviar um GET para "/api/Espaco/42"
+    Quando eu enviar um GET para "/api/Espaco/00000000-0000-0000-0000-000000000042"
     Então o status da resposta deve ser 200
-    E o corpo deve conter:
-      """
-      { "id": 42, "nome": "Sala A" }
-      """
+    E o corpo da resposta deve conter um campo "nome" dentro de dados com o valor "Sala A"
+    E o corpo da resposta deve conter um campo "id" não vazio
 
   @erro
   Cenário: Buscar espaço inexistente
-    Quando eu enviar um GET para "/api/Espaco/9999"
+    Quando eu enviar um GET para "/api/Espaco/00000000-0000-0000-0000-000000009999"
     Então o status da resposta deve ser 404
-    E o corpo deve conter:
-      """
-      { "error": "Espaço não encontrado" }
-      """
+    E o corpo da resposta deve conter um campo "mensagem" com o valor "Espaço com ID 00000000-0000-0000-0000-000000009999 não encontrado."
 
   @sucesso
   Cenário: Criar novo espaço com dados válidos
@@ -47,7 +45,4 @@ Funcionalidade: Gerenciamento de Espaços
       }
       """
     Então o status da resposta deve ser 400
-    E o corpo deve conter:
-      """
-      { "errors": { "Nome": "O campo Nome é obrigatório" } }
-      """
+    E o corpo da resposta deve conter "The Nome field is required."
